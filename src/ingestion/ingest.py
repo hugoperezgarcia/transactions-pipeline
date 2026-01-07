@@ -2,7 +2,7 @@ from pathlib import Path
 from datetime import date
 import pandas as pd
 
-RAW_CSV_PATH = Path('data/raw/creditcard.csv')
+RAW_CSV_PATH = Path('data/raw/csv/creditcard.csv')
 RAW_PARQUET_BASE = Path('data/raw/parquet')
 
 def ingest_csv_to_raw_parquet() -> Path:
