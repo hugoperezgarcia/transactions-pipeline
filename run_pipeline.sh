@@ -23,7 +23,8 @@ fi
 # Step 1: Ingest CSV -> Raw
 # -----------------------------
 echo "[STEP 1] Ingest CSV -> Raw Parquet"
-python3 src/ingestion/ingest.py
+python3 src/ingestion/ingest.py \
+  --ingestion-date "${INGESTION_DATE}"
 
 # -----------------------------
 # Step 2: Raw -> Processed
@@ -40,5 +41,5 @@ python3 src/transformations/build_analytics.py \
   --ingestion-date "${INGESTION_DATE}"
 
 echo "===================================="
-echo "[SUCCESS] Pipeline finished correctly"
+echo "Pipeline finished correctly"
 echo "===================================="

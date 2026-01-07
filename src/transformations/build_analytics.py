@@ -2,7 +2,6 @@ from pathlib import Path
 import pandas as pd
 import argparse
 
-FECHA = '2026-01-07'
 ANALYTICS_BASE = Path('data/analytics/parquet')
 
 def parse_args():
@@ -13,6 +12,10 @@ def parse_args():
 def fact_transactions(df: pd.DataFrame) -> pd.DataFrame:
     fact_cols = ['ingestion_date', 'event_ts', 'event_date', 'Amount', 'Class']
     fact = df.loc[:, fact_cols].copy()
+    fact = fact.sort_values(
+        ['event_ts', 'ingestion_date', 'Amount', 'Class'],
+        kind='mergesort'
+    ).reset_index(drop=True)
 
     #Columna clave tecnica surrogate key, para identificar filas en analytics
     fact['transactions_sk'] = range(1, len(fact) + 1)
@@ -26,7 +29,7 @@ def dim_time(df: pd.DataFrame) -> pd.DataFrame:
     dim['month'] = dim['event_date'].dt.month
     dim['day'] = dim['event_date'].dt.day
     dim['day_of_week'] = dim['event_date'].dt.dayofweek
-    dim['is_weekend'] = dim['event_date'].isin([5,6])
+    dim['is_weekend'] = dim['day_of_week'] >= 5
     return dim
 
 def daily_metrics(df: pd.DataFrame) -> pd.DataFrame:

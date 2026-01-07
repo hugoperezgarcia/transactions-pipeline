@@ -26,8 +26,20 @@ def comprobaciones(df: pd.DataFrame) -> None:
     if not bad_nulls.empty:
         raise ValueError(f'Hay nulos: \n {bad_nulls.to_string()}')
     
+    if df['Time'].dtype.kind not in ('i', 'u', 'f'):
+        raise ValueError('Columna Time tiene que ser numerica')
+
+    if (df['Time'] < 0).any():
+        raise ValueError('Columna Time no puede ser negativa')
+
     if df['Class'].dtype.kind not in ('i', 'u'):
         raise ValueError('Columna Class tiene que ser de tipo entero')
+
+    if not df['Class'].isin([0, 1]).all():
+        raise ValueError('Columna Class debe contener solo 0 o 1')
+
+    if df['Amount'].dtype.kind not in ('i', 'u', 'f'):
+        raise ValueError('Columna Amount tiene que ser numerica')
     
     if (df['Amount'] < 0).any():
         raise ValueError('Columna Amount no puede ser negativa')
@@ -36,7 +48,7 @@ def build(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.drop_duplicates().copy()
    
-    df.loc[:,'event_ts'] = BASE_TS + pd.to_timedelta(df['Time'].astype('int64'), unit='s')
+    df.loc[:,'event_ts'] = BASE_TS + pd.to_timedelta(df['Time'], unit='s')
     df.loc[:,'event_date'] = df['event_ts'].dt.date
 
     #Reordenamos las columnas para mayor comprension a simple vista
